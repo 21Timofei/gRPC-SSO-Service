@@ -41,7 +41,7 @@ func MustLoad() *Config {
 func fetchConfigPath() string {
 	var res string
 
-	flag.StringVar(&res, "config", "", "config path")
+	flag.StringVar(&res, "config", "", "path config path")
 	flag.Parse()
 
 	if res == "" {

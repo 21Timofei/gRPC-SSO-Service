@@ -7,6 +7,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/ilyakaznacheev/cleanenv v1.5.0
+	github.com/mattn/go-sqlite3 v1.14.24
 	golang.org/x/crypto v0.32.0
 	google.golang.org/grpc v1.69.4
 )
@@ -16,9 +17,8 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241015192408-796eee8c2d53 // indirect

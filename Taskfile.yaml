@@ -1,6 +1,13 @@
 version : "3"
 
 tasks :
+  run :
+    aliases:
+      - run
+    desc: "Run application"
+    cmds:
+      - go run gRPCAuthService/cmd/sso --config=./config/local.yaml
+
   migrate :
     aliases :
       - migrations

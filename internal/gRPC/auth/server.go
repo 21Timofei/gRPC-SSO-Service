@@ -2,6 +2,9 @@ package auth
 
 import (
 	"context"
+	"errors"
+	"gRPCAuthService/internal/services/auth"
+	"gRPCAuthService/internal/storage"
 	ssov1 "github.com/21Timofei/Contracts/gen/go/sso"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -34,6 +37,9 @@ func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 
 	token, err := s.auth.Login(ctx, req.GetEmail(), req.GetPassword(), int(req.GetAppId()))
 	if err != nil {
+		if errors.Is(err, auth.ErrInvalidCredentials) {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
@@ -49,6 +55,9 @@ func (s *serverAPI) Register(ctx context.Context, req *ssov1.RegisterRequest) (*
 
 	userID, err := s.auth.RegisterNewUser(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
+		if errors.Is(err, storage.ErrNotExists) {
+			return nil, status.Error(codes.AlreadyExists, err.Error())
+		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
@@ -65,6 +74,9 @@ func (s *serverAPI) IsAdmin(ctx context.Context, req *ssov1.IsAdminRequest) (*ss
 
 	isAdmin, err := s.auth.IsAdmin(ctx, req.GetUserId())
 	if err != nil {
+		if errors.Is(err, storage.ErrUserNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
