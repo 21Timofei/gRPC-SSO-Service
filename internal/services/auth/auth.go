@@ -8,8 +8,6 @@ import (
 	"gRPCAuthService/internal/lib/jwt"
 	"gRPCAuthService/internal/storage"
 	"golang.org/x/crypto/bcrypt"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"log/slog"
 	"time"
 )
@@ -64,12 +62,12 @@ func (a *Auth) Login(ctx context.Context, email, password string, appID int) (st
 		}
 
 		a.log.Error("failed", slog.String("error", err.Error()))
-		return "", grpc.Errorf(codes.Internal, "%s: %s", op, err)
+		return "", fmt.Errorf("%s: %s", op, err)
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.PassHash, []byte(password)); err != nil {
 		a.log.Warn("invalid password", slog.String("error", err.Error()))
-		return "", grpc.Errorf(codes.Internal, "%s: %s", op, ErrInvalidCredentials)
+		return "", fmt.Errorf("%s: %s", op, ErrInvalidCredentials)
 	}
 
 	app, err := a.appProvider.App(ctx, appID)
@@ -81,7 +79,7 @@ func (a *Auth) Login(ctx context.Context, email, password string, appID int) (st
 		}
 
 		a.log.Error("failed", slog.String("error", err.Error()))
-		return "", grpc.Errorf(codes.Internal, "%s: %s", op, ErrInvalidAppID)
+		return "", fmt.Errorf("%s: %s", op, ErrInvalidAppID)
 	}
 
 	slog.Info("success", slog.String("email", email))
@@ -107,13 +105,13 @@ func (a *Auth) Register(ctx context.Context, email, password string) (int64, err
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		slog.Error(err.Error())
-		return 0, fmt.Errorf("%w: %s", op, err)
+		return 0, fmt.Errorf("%s: %s", op, err)
 	}
 
 	id, err := a.userSaver.SaveUser(ctx, email, hash)
 	if err != nil {
 		slog.Error(err.Error())
-		return 0, fmt.Errorf("%w: %s", op, err)
+		return 0, fmt.Errorf("%s: %s", op, err)
 	}
 
 	slog.Info("Successfully registered")
@@ -130,7 +128,7 @@ func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 
 	isAdmin, err := a.userProvider.IsAdmin(ctx, userID)
 	if err != nil {
-		if errors.Is(err, storage.ErrUserNotFound) {
+		if errors.Is(err, storage.ErrNotFound) {
 			a.log.Warn("user not found", slog.String("error", err.Error()))
 			return false, nil
 		}

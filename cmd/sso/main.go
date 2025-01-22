@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"gRPCAuthService/internal/app"
 	"gRPCAuthService/internal/config"
 	"log/slog"
@@ -18,7 +17,6 @@ const (
 
 func main() {
 	cfg := config.MustLoad()
-	fmt.Println(cfg)
 
 	log := setupLogger(cfg.Env)
 
